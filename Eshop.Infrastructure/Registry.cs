@@ -1,4 +1,5 @@
-﻿using Eshop.Domain.Orders;
+﻿using Eshop.Domain.Customers;
+using Eshop.Domain.Orders;
 using Eshop.Domain.SeedWork;
 using Eshop.Infrastructure.Database;
 using Eshop.Infrastructure.Repositories;
@@ -12,6 +13,8 @@ namespace Eshop.Infrastructure
     {
         public static void RegistryInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             services.AddScoped<IOrderRepository, OrderRepository>();
 
             services.AddScoped<IProductPriceDataApi, ProductPriceDataApi>();
@@ -27,6 +30,11 @@ namespace Eshop.Infrastructure
             services.AddSingleton<IMongoClient>(ServiceProvider =>
             {
                 return new MongoClient(mongoDbSettings.ConnectionString);
+            });
+
+            services.AddSingleton(provider =>
+            {
+                return new CustomersContext(mongoDbSettings);
             });
 
             services.AddSingleton(provider =>
